@@ -6,25 +6,26 @@
 
 #include "server/server.hpp"
 #include "request/request.hpp"
+#include "response/static_response_factory.hpp"
 
 
 int main() {
+
+        StaticResponseFactory factory("static");
+
         Server server(8080, std::cout);
         server.listen();
 
-        std::function<void(int)> response_func = [](int socket_fd) -> void {
-                // Read request
+        std::function<void(int)> response_func = [&factory](int socket_fd) -> void {
+
                 char buffer[30000] = {0};
                 read(socket_fd, buffer, 30000);
                 Request req(buffer);
-                std::cout << req << "\n";
 
-                // Send response
-                std::string response =
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/html\r\n"
-                "Connection: close\r\n\r\n"
-                "<html><body><h1>Hello, World!</h1></body></html>";
+                if(req.target.empty())
+                        req.target = "index.html";
+
+                std::string response = factory.make_response(req.target);
                 write(socket_fd, response.c_str(), response.size());
         };
 

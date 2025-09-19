@@ -13,13 +13,13 @@ Request::Request(const std::string & raw) {
         }
 
         // TODO manage other methods
-        if(raw.substr(0, 3) == "GET") {
+        if(raw.starts_with("GET")) {
                 method = Method::GET;
         }
-        else if(raw.substr(0, 3) == "PUT") {
+        else if(raw.starts_with("PUT")) {
                 method = Method::PUT;
         }
-        else if(raw.substr(0, 4) == "POST") {
+        else if(raw.starts_with("POST")) {
                 method = Method::POST;
         }
         else {

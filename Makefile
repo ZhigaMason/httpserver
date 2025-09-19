@@ -7,7 +7,8 @@ LDFLAGS = $(CXXFLAGS)
 
 SRC = 	src/main.cpp\
 	src/server/server.cpp\
-	src/request/request.cpp
+	src/request/request.cpp\
+	src/response/static_response_factory.cpp
 
 OBJ = main.out debug.out
 
