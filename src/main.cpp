@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 
 #include "server/server.hpp"
+#include "request/request.hpp"
 
 
 int main() {
@@ -15,7 +16,8 @@ int main() {
                 // Read request
                 char buffer[30000] = {0};
                 read(socket_fd, buffer, 30000);
-                std::cout << "Request:\n" << buffer << "\n";
+                Request req(buffer);
+                std::cout << req << "\n";
 
                 // Send response
                 std::string response =
