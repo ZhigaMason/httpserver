@@ -8,7 +8,7 @@ struct StaticResponseFactory {
 
         StaticResponseFactory(path parent_dir);
 
-        std::string make_response(const path & filename);
+        void make_response(const path & filename, int socket);
 
 private:
         path parent_dir;

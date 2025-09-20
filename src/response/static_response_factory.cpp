@@ -2,22 +2,40 @@
 
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
+#include <sys/sendfile.h>
 
 StaticResponseFactory::StaticResponseFactory(path parent_dir) : parent_dir(std::move(parent_dir)) {}
 
-std::string StaticResponseFactory::make_response(const path & filename) {
+void StaticResponseFactory::make_response(const path & filename, int socket) {
+        static const std::string response404 = "HTTP/1.1 404 Not Found\r\n"
+                "Content-Type: text/plain\r\n\r\n"
+                "404 Not Found";
         path fp = parent_dir / filename;
-        std::string body = readfile(fp);
-        if(body.empty()) {
-                return  "HTTP/1.1 404 Not Found\r\n"
-                        "Content-Type: text/plain\r\n\r\n"
-                        "404 Not Found";
+        FILE * fptr = fopen(fp.string().c_str(), "rb");
+        if(!fptr) {
+                write(socket, response404.c_str(), response404.size());
         }
 
-        return  "HTTP/1.1 200 OK\r\n" +
+        int fd = fileno(fptr);
+        size_t filesize = file_size(fp);
+
+        std::string header =  "HTTP/1.1 200 OK\r\n" +
                 std::string("Content-Type: ") + mime_type(filename) + "\r\n" +
-                "Content-Length: " + std::to_string(body.size()) + "\r\n\r\n" +
-                body;
+                "Content-Length: " + std::to_string(filesize) + "\r\n\r\n";
+
+        write(socket, header.c_str(), header.size());
+        off_t offset = 0;
+        ssize_t sent = 0;
+        while (sent < filesize) {
+                ssize_t n = sendfile(socket, fd, &offset, filesize - sent);
+                if (n <= 0) {
+                        fclose(fptr);
+                        throw std::domain_error("sendfile");
+                }
+                sent += n;
+        }
+        fclose(fptr);
 }
 
 std::string StaticResponseFactory::readfile(const path & fp) {

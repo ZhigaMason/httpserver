@@ -25,8 +25,7 @@ int main() {
                 if(req.target.empty())
                         req.target = "index.html";
 
-                std::string response = factory.make_response(req.target);
-                write(socket_fd, response.c_str(), response.size());
+                factory.make_response(req.target, socket_fd);
         };
 
         while (true) {
