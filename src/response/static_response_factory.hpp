@@ -8,13 +8,13 @@ struct StaticResponseFactory {
 
         StaticResponseFactory(path parent_dir);
 
-        void make_response(const path & filename, int socket);
+        void make_response(const path & filename, int socket) const;
 
 private:
         path parent_dir;
 
-        std::string readfile(const path & fp);
+        static std::string readfile(const path & fp);
 
-        std::string mime_type(const path & fp);
+        static std::string mime_type(const path & fp);
 };
 #endif//STATIC_RESPONSE_HPP_1C04914N9N891C041C04N891C0489

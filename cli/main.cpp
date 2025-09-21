@@ -15,12 +15,12 @@
 
 
 std::atomic<bool>& running_flag() {
-    static std::atomic<bool> flag{true};
+    static std::atomic<bool> flag{false};
     return flag;
 }
 
 void handle_signal(int) {
-    running_flag().store(false);
+    running_flag().store(true);
 }
 
 int main(int argc, char ** argv) {
@@ -44,8 +44,6 @@ int main(int argc, char ** argv) {
                 if(!fos->is_open())
                         throw std::domain_error("Could not open file: " + argdata.log_file);
         }
-        Server server(argdata.port, *log_os);
-        server.listen();
 
         std::function<void(int)> response_func = [&factory](int socket_fd) -> void {
 
@@ -59,9 +57,12 @@ int main(int argc, char ** argv) {
                 factory.make_response(req.target, socket_fd);
         };
 
-        while (running_flag().load()) {
-                server.parse_request(response_func);
-        }
+        std::function<bool()> stop_predicate = [](){ return running_flag().load(); };
+
+        Server server(argdata.port, *log_os);
+        server.setup_workers(argdata.n_threads, response_func)
+              .listen()
+              .run(stop_predicate);
 
         if(!argdata.static_dir.empty())
                 delete log_os;

@@ -7,7 +7,7 @@
 
 StaticResponseFactory::StaticResponseFactory(path parent_dir) : parent_dir(std::move(parent_dir)) {}
 
-void StaticResponseFactory::make_response(const path & filename, int socket) {
+void StaticResponseFactory::make_response(const path & filename, int socket) const {
         static const std::string response404 = "HTTP/1.1 404 Not Found\r\n"
                 "Content-Type: text/plain\r\n\r\n"
                 "404 Not Found";
