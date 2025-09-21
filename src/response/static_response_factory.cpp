@@ -30,6 +30,8 @@ void StaticResponseFactory::make_response(const path & filename, int socket) {
         while (sent < filesize) {
                 ssize_t n = sendfile(socket, fd, &offset, filesize - sent);
                 if (n <= 0) {
+                        if (errno == EPIPE || errno == ECONNRESET)
+                                break;
                         fclose(fptr);
                         throw std::domain_error("sendfile");
                 }

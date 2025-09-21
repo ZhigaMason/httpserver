@@ -3,6 +3,7 @@
 #include <cstring>
 #include <unistd.h>
 #include <netinet/in.h>
+#include <signal.h>
 
 #include "server/server.hpp"
 #include "request/request.hpp"
@@ -10,6 +11,8 @@
 
 
 int main() {
+
+        signal(SIGPIPE, SIG_IGN);
 
         StaticResponseFactory factory("static");
 
