@@ -11,13 +11,13 @@ SRC = 	cli/main.cpp\
 	src/response/static_response_factory.cpp\
 	src/thread_safe_queue/thread_safe_queue.cpp
 
-OBJ = main.out debug.out
+OBJ = httpserver debug.out
 
 DEBUG_DIR = _debug
 
 all: $(OBJ)
 
-main.out: $(SRC:.cpp=.o)
+httpserver: $(SRC:.cpp=.o)
 	$(LD) $(LDFLAGS) -o $@ $^
 
 debug.out: $(addprefix $(DEBUG_DIR)/, $(SRC:.cpp=.o))
