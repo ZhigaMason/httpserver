@@ -15,6 +15,7 @@ void StaticResponseFactory::make_response(const path & filename, int socket) {
         FILE * fptr = fopen(fp.string().c_str(), "rb");
         if(!fptr) {
                 write(socket, response404.c_str(), response404.size());
+                return;
         }
 
         int fd = fileno(fptr);

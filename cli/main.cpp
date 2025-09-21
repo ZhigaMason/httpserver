@@ -24,11 +24,14 @@ void handle_signal(int) {
 }
 
 int main(int argc, char ** argv) {
+        ArgData argdata = input(argc, argv);
+
+        if(argdata.arparse_exit_status == EXIT_HELP)
+                return EXIT_SUCCESS;
 
         signal(SIGPIPE, SIG_IGN);
         signal(SIGTERM, handle_signal);
 
-        ArgData argdata = input(argc, argv);
 
         StaticResponseFactory factory(argdata.static_dir);
 
@@ -36,7 +39,10 @@ int main(int argc, char ** argv) {
         std::ostream * log_os = nullptr;
         if(argdata.log_file.empty()) log_os = &std::cout;
         else {
-                log_os = new std::ofstream(argdata.static_dir, std::ios_base::app);
+                std::ofstream * fos = new std::ofstream(argdata.log_file, std::ios_base::app);
+                log_os = fos;
+                if(!fos->is_open())
+                        throw std::domain_error("Could not open file: " + argdata.log_file);
         }
         Server server(argdata.port, *log_os);
         server.listen();

@@ -13,9 +13,10 @@ struct Server {
         void listen();
 
         void parse_request(std::function<void(int)> & response_func);
+
+        std::ostream & log_os;
 private:
         int server_fd;
         sockaddr_in address;
-        std::ostream & log_os;
 };
 #endif//SOCKET_HPP_QNQC23C37CR89Q237R89C7NQ2RN23
