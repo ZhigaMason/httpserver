@@ -1,11 +1,11 @@
 CXX = clang++
-CXXFLAGS = -std=c++20 -Wall -pedantic -O2
+CXXFLAGS = -std=c++20 -Wall -pedantic -O2 -I./src/
 DEBUGFLAGS = -O0 -g -fsanitize=address
 
 LD = $(CXX)
 LDFLAGS = $(CXXFLAGS)
 
-SRC = 	src/main.cpp\
+SRC = 	cli/main.cpp\
 	src/server/server.cpp\
 	src/request/request.cpp\
 	src/response/static_response_factory.cpp
